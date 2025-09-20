@@ -31,7 +31,125 @@ We use this categorical data encoding technique when the features are nominal(do
 • Yeojohnson method
 
 # CODING AND OUTPUT:
-       # INCLUDE YOUR CODING AND OUTPUT SCREENSHOTS HERE
+## 1. Ordinal Encoding
+```python
+import pandas as pd
+from sklearn.preprocessing import OrdinalEncoder
+
+df = pd.read_csv("data.csv")
+
+ord1_order = ['Cold', 'Warm', 'Hot', 'Very Hot']
+ord2_order = ['High School', 'Diploma', 'Bachelors', 'Masters', 'PhD']
+
+ordinal_enc = OrdinalEncoder(categories=[ord1_order, ord2_order])
+df[['Ord_1_encoded', 'Ord_2_encoded']] = ordinal_enc.fit_transform(df[['Ord_1', 'Ord_2']])
+
+print(df[['Ord_1', 'Ord_1_encoded', 'Ord_2', 'Ord_2_encoded']])
+```
+<img width="561" height="250" alt="image" src="https://github.com/user-attachments/assets/13b6c5a7-d6dd-4af1-9881-28c9e6f1d669" />
+
+2. Label Encoding
+
+```Python
+import pandas as pd
+from sklearn.preprocessing import LabelEncoder
+
+df = pd.read_csv("data.csv")
+
+le_city = LabelEncoder()
+df['City_label'] = le_city.fit_transform(df['City'])
+
+print(df[['City', 'City_label']])
+```
+<img width="280" height="246" alt="image" src="https://github.com/user-attachments/assets/ad6dffca-4d59-4668-93f6-38efe803af1f" />
+
+3. Binary Encoding (Manual)
+```Python
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import LabelEncoder
+
+df = pd.read_csv("data.csv")
+```
+# Label encode first
+le_city = LabelEncoder()
+df['City_label'] = le_city.fit_transform(df['City'])
+
+n_unique = df['City_label'].nunique()
+max_bits = int(np.ceil(np.log2(n_unique)))
+for i in range(max_bits):
+    df[f'City_bin_{i}'] = df['City_label'].apply(lambda x: (x >> i) & 1)
+
+print(df[['City', 'City_label'] + [f'City_bin_{i}' for i in range(max_bits)]])
+4. One Hot Encoding
+Python
+import pandas as pd
+
+df = pd.read_csv("data.csv")
+
+df_ohe = pd.get_dummies(df['City'], prefix='City')
+df = pd.concat([df, df_ohe], axis=1)
+
+print(df[['City'] + list(df_ohe.columns)])
+5. Log Transformation
+Python
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv("data.csv")
+
+df['Target_log'] = np.log(df['Target'] + 1)
+print(df[['Target', 'Target_log']])
+6. Reciprocal Transformation
+Python
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv("data.csv")
+
+df['Target_reciprocal'] = 1 / (df['Target'] + 1e-6)
+print(df[['Target', 'Target_reciprocal']])
+7. Square Root Transformation
+Python
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv("data.csv")
+
+df['Target_sqrt'] = np.sqrt(df['Target'])
+print(df[['Target', 'Target_sqrt']])
+8. Square Transformation
+Python
+import pandas as pd
+
+df = pd.read_csv("data.csv")
+
+df['Target_square'] = df['Target'] ** 2
+print(df[['Target', 'Target_square']])
+9. Boxcox Method
+Python
+import pandas as pd
+from sklearn.preprocessing import PowerTransformer
+
+df = pd.read_csv("data.csv")
+
+# Boxcox requires strictly positive values, so add 1
+pt_boxcox = PowerTransformer(method='box-cox')
+df['Target_boxcox'] = pt_boxcox.fit_transform(df[['Target']] + 1)
+
+print(df[['Target', 'Target_boxcox']])
+10. Yeo-Johnson Method
+Python
+import pandas as pd
+from sklearn.preprocessing import PowerTransformer
+
+df = pd.read_csv("data.csv")
+
+pt_yeojohnson = PowerTransformer(method='yeo-johnson')
+df['Target_yeojohnson'] = pt_yeojohnson.fit_transform(df[['Target']])
+
+print(df[['Target', 'Target_yeojohnson']])
+```    
 # RESULT:
        # INCLUDE YOUR RESULT HERE
 
